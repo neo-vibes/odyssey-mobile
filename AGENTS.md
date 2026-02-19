@@ -72,3 +72,24 @@ src/
 - Don't log sensitive data
 - Don't hardcode API URLs (use config)
 - Don't skip verification checklist
+
+## Lazorkit Mobile SDK
+
+Use `@lazorkit/wallet-mobile-adapter` for passkey wallet.
+
+**Cookbook:** https://github.com/0xharp/lazorkit-cookbook/tree/main/mobile
+
+```tsx
+import { useWallet } from '@lazorkit/wallet-mobile-adapter';
+
+const { wallet, isConnected, connect, disconnect } = useWallet();
+
+await connect({
+  redirectUrl: Linking.createURL('callback'),
+  onSuccess: (w) => console.log(w.smartWallet),
+});
+```
+
+- Uses deep linking for redirect flow
+- `wallet.smartWallet` = Solana address
+- Test with both simulator and real device
