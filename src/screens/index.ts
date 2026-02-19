@@ -6,3 +6,4 @@ export { AgentsScreen } from './AgentsScreen';
 export { PairAgentScreen } from './PairAgentScreen';
 export { AgentDetailScreen } from './AgentDetailScreen';
 export { SessionDetailScreen } from './SessionDetailScreen';
+export { ApproveSessionScreen } from './ApproveSessionScreen';
