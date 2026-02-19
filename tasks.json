@@ -1,0 +1,155 @@
+{
+  "project": "odyssey-mobile",
+  "spec": "spec.md",
+  "tasks": [
+    {
+      "id": "setup",
+      "name": "Project init, deps",
+      "deps": [],
+      "prompt": "Initialize React Native with Expo, TypeScript, and core deps",
+      "acceptance": [
+        "Expo project created with TypeScript template",
+        "Core deps: react-navigation, zustand, @solana/web3.js",
+        "ESLint + Prettier configured",
+        "App runs with 'npx expo start'"
+      ],
+      "estimatedIterations": 5
+    },
+    {
+      "id": "types",
+      "name": "TypeScript types + Zod schemas",
+      "deps": ["setup"],
+      "prompt": "Define types for wallet, agent, session, transaction",
+      "acceptance": [
+        "Types exported from src/types/index.ts",
+        "Zod schemas for API responses",
+        "No 'any' types"
+      ],
+      "estimatedIterations": 5
+    },
+    {
+      "id": "services-api",
+      "name": "Odyssey API client",
+      "deps": ["types"],
+      "prompt": "HTTP client for Odyssey API endpoints",
+      "acceptance": [
+        "Pairing request/check",
+        "Session request/check",
+        "Transfer endpoints",
+        "Proper error handling"
+      ],
+      "estimatedIterations": 8
+    },
+    {
+      "id": "services-solana",
+      "name": "Solana RPC service",
+      "deps": ["types"],
+      "prompt": "Solana balance checks and transaction building",
+      "acceptance": [
+        "Get SOL balance",
+        "Get SPL token balances",
+        "Build transfer transactions",
+        "Works with devnet"
+      ],
+      "estimatedIterations": 8
+    },
+    {
+      "id": "navigation",
+      "name": "React Navigation setup",
+      "deps": ["setup"],
+      "prompt": "Set up navigation structure with tabs and stacks",
+      "acceptance": [
+        "Tab navigator (Wallet, Agents, Settings)",
+        "Stack navigators for detail screens",
+        "Type-safe navigation"
+      ],
+      "estimatedIterations": 5
+    },
+    {
+      "id": "onboarding",
+      "name": "Passkey wallet creation",
+      "deps": ["navigation", "services-api"],
+      "prompt": "Wallet creation flow using Lazorkit passkeys",
+      "acceptance": [
+        "Create wallet with passkey",
+        "Store wallet in secure storage",
+        "Navigate to main app after creation"
+      ],
+      "estimatedIterations": 15
+    },
+    {
+      "id": "wallet-screen",
+      "name": "Wallet screen - balance, deposit, send",
+      "deps": ["services-solana", "navigation"],
+      "prompt": "Main wallet screen with balance display and actions",
+      "acceptance": [
+        "Display SOL and token balances",
+        "Deposit address QR code",
+        "Send flow with amount input"
+      ],
+      "estimatedIterations": 12
+    },
+    {
+      "id": "agents-screen",
+      "name": "Agents list and pairing",
+      "deps": ["services-api", "navigation"],
+      "prompt": "List paired agents and handle new pairing",
+      "acceptance": [
+        "List of paired agents",
+        "Pairing flow with code entry",
+        "Agent status indicators"
+      ],
+      "estimatedIterations": 10
+    },
+    {
+      "id": "agent-detail",
+      "name": "Agent detail - sessions list",
+      "deps": ["agents-screen"],
+      "prompt": "Agent detail screen showing sessions",
+      "acceptance": [
+        "List of sessions for agent",
+        "Session status (pending/active/expired)",
+        "Approve/deny pending sessions"
+      ],
+      "estimatedIterations": 10
+    },
+    {
+      "id": "session-detail",
+      "name": "Session detail - transaction log",
+      "deps": ["agent-detail"],
+      "prompt": "Session detail with transaction history",
+      "acceptance": [
+        "Session info (amount, duration, status)",
+        "Transaction log",
+        "Revoke session action"
+      ],
+      "estimatedIterations": 8
+    },
+    {
+      "id": "notifications",
+      "name": "Notification system",
+      "deps": ["agents-screen"],
+      "prompt": "Push notifications for session requests",
+      "acceptance": [
+        "Expo push notifications setup",
+        "Notification when session requested",
+        "Deep link to approval screen"
+      ],
+      "estimatedIterations": 12
+    },
+    {
+      "id": "integration",
+      "name": "Full flow testing",
+      "deps": ["onboarding", "wallet-screen", "agent-detail", "session-detail", "notifications"],
+      "prompt": "End-to-end testing of complete flows",
+      "acceptance": [
+        "Wallet creation works",
+        "Agent pairing works",
+        "Session approval works",
+        "Transfers execute correctly"
+      ],
+      "estimatedIterations": 15
+    }
+  ],
+  "mergeOrder": ["setup", "types", "navigation", "services-api", "services-solana", "onboarding", "wallet-screen", "agents-screen", "agent-detail", "session-detail", "notifications", "integration"]
+}
