@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, StyleSheet } from 'react-native';
 import { RootStackParamList, MainTabParamList } from '../types';
+import { OnboardingScreen } from '../screens';
 
 // ============================================================================
 // Placeholder Screens (to be replaced)
@@ -17,10 +18,6 @@ function PlaceholderScreen({ name }: { name: string }) {
 }
 
 // Placeholder implementations
-function OnboardingScreen() {
-  return <PlaceholderScreen name="Onboarding" />;
-}
-
 function WalletScreen() {
   return <PlaceholderScreen name="Wallet" />;
 }
