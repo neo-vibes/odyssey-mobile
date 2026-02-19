@@ -4,3 +4,5 @@ export { SendScreen } from './SendScreen';
 export { ReceiveScreen } from './ReceiveScreen';
 export { AgentsScreen } from './AgentsScreen';
 export { PairAgentScreen } from './PairAgentScreen';
+export { AgentDetailScreen } from './AgentDetailScreen';
+export { SessionDetailScreen } from './SessionDetailScreen';

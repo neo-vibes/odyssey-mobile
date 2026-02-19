@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, StyleSheet } from 'react-native';
 import { RootStackParamList, MainTabParamList } from '../types';
-import { OnboardingScreen, WalletScreen, SendScreen, ReceiveScreen, AgentsScreen, PairAgentScreen } from '../screens';
+import { OnboardingScreen, WalletScreen, SendScreen, ReceiveScreen, AgentsScreen, PairAgentScreen, AgentDetailScreen, SessionDetailScreen } from '../screens';
 
 // ============================================================================
 // Placeholder Screens (to be replaced)
@@ -20,14 +20,6 @@ function PlaceholderScreen({ name }: { name: string }) {
 // Placeholder implementations
 function SettingsScreen() {
   return <PlaceholderScreen name="Settings" />;
-}
-
-function AgentDetailScreen() {
-  return <PlaceholderScreen name="Agent Detail" />;
-}
-
-function SessionDetailScreen() {
-  return <PlaceholderScreen name="Session Detail" />;
 }
 
 function ApproveSessionScreen() {
