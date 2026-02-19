@@ -1,0 +1,212 @@
+{
+  "project": "odyssey-mobile",
+  "spec": "docs/spec.md",
+  "tasks": [
+    {
+      "id": "setup",
+      "name": "Project Setup",
+      "deps": [],
+      "prompt": "Initialize Expo React Native project with TypeScript, ESLint, Vitest. Install dependencies: @lazorkit/wallet-mobile-adapter, @solana/web3.js, react-navigation, zod. Set up folder structure per AGENTS.md.",
+      "acceptance": [
+        "Expo project runs (npm start works)",
+        "TypeScript strict mode enabled",
+        "ESLint configured and passing",
+        "All dependencies installed",
+        "Folder structure: src/{types,components,hooks,services,screens,navigation,utils}"
+      ],
+      "estimatedIterations": 20
+    },
+    {
+      "id": "types",
+      "name": "Type Definitions",
+      "deps": ["setup"],
+      "prompt": "Define TypeScript types for: Wallet, Agent, Session, SessionRequest, Transaction. Use Zod schemas for API response validation. Export from src/types/index.ts.",
+      "acceptance": [
+        "Wallet type: { pubkey, createdAt }",
+        "Agent type: { id, name, pairedAt, activeSessionCount }",
+        "Session type: { id, agentId, status, limits, expiry, createdAt }",
+        "SessionRequest type: { id, agentName, limits, scope, createdAt }",
+        "Transaction type: { id, sessionId, amount, destination, status, timestamp }",
+        "Zod schemas for all API responses",
+        "Types exported from index.ts"
+      ],
+      "estimatedIterations": 10
+    },
+    {
+      "id": "services-api",
+      "name": "API Client Service",
+      "deps": ["types"],
+      "prompt": "Create API client service for Odyssey backend. Use fetch with Zod validation. Endpoints: wallets, sessions, agents. Configurable base URL. Add logger.debug for all API calls.",
+      "acceptance": [
+        "api.registerWallet(pubkey)",
+        "api.getWallets(userId)",
+        "api.getAgents(walletPubkey)",
+        "api.getSessions(agentId)",
+        "api.getPendingRequests(walletPubkey)",
+        "api.approveSession(requestId)",
+        "api.denySession(requestId)",
+        "api.getSessionTransactions(sessionId)",
+        "All responses validated with Zod",
+        "Configurable base URL via env/config",
+        "Unit tests pass"
+      ],
+      "estimatedIterations": 15
+    },
+    {
+      "id": "services-solana",
+      "name": "Solana Service",
+      "deps": ["types"],
+      "prompt": "Create Solana RPC service for balance queries and transaction sending. Use @solana/web3.js. Connect to devnet. Add debug logging.",
+      "acceptance": [
+        "solana.getBalance(pubkey) returns SOL balance",
+        "solana.sendTransaction(tx) sends and confirms",
+        "solana.getRecentTransactions(pubkey) for history",
+        "Configurable RPC endpoint",
+        "Error handling with typed errors",
+        "Unit tests with mocked RPC"
+      ],
+      "estimatedIterations": 12
+    },
+    {
+      "id": "navigation",
+      "name": "Navigation Setup",
+      "deps": ["setup"],
+      "prompt": "Set up React Navigation with bottom tabs (Agents, Wallet) and stack navigators for detail screens. Include placeholder screens.",
+      "acceptance": [
+        "Bottom tab navigator: Agents, Wallet",
+        "Stack navigator for Agents: List → AgentDetail → SessionDetail",
+        "Stack navigator for Wallet: Main, Deposit, Send",
+        "Header with notification bell icon",
+        "Navigation types exported",
+        "Placeholder screens render"
+      ],
+      "estimatedIterations": 12
+    },
+    {
+      "id": "onboarding",
+      "name": "Onboarding Flow",
+      "deps": ["navigation", "services-api"],
+      "prompt": "Create onboarding screen for first launch. Use @lazorkit/wallet-mobile-adapter for passkey wallet creation. Register wallet with API after creation. Navigate to main app on success.",
+      "acceptance": [
+        "Welcome screen with 'Create Wallet' button",
+        "LazorKitProvider wraps app",
+        "useWallet().connect() triggers passkey creation",
+        "On success: register wallet with API",
+        "On success: navigate to main tabs",
+        "On error: show error message, retry option",
+        "Only shown on first launch (check AsyncStorage)"
+      ],
+      "estimatedIterations": 15
+    },
+    {
+      "id": "wallet-screen",
+      "name": "Wallet Screen",
+      "deps": ["services-solana", "navigation"],
+      "prompt": "Create Wallet tab screen showing SOL balance, wallet address, deposit and send buttons. Deposit shows QR code and address. Send flow: amount input, destination, confirm with passkey.",
+      "acceptance": [
+        "Shows SOL balance (fetched from Solana)",
+        "Shows wallet address (truncated, tap to copy)",
+        "Deposit button → modal with QR + full address",
+        "Send button → Send flow screen",
+        "Send flow: amount, destination input, confirm",
+        "Send uses signAndSendTransaction",
+        "Loading and error states handled"
+      ],
+      "estimatedIterations": 18
+    },
+    {
+      "id": "agents-screen",
+      "name": "Agents List Screen",
+      "deps": ["services-api", "navigation"],
+      "prompt": "Create Agents tab screen listing paired agents. Show agent name, active session count. Add agent button triggers pairing flow. Swipe/long-press to revoke.",
+      "acceptance": [
+        "List all paired agents from API",
+        "Each item shows: name, active sessions count",
+        "Tap agent → navigate to AgentDetail",
+        "Add Agent button in header",
+        "Add Agent flow: enter pairing code, confirm",
+        "Revoke agent via swipe or long-press",
+        "Empty state when no agents"
+      ],
+      "estimatedIterations": 15
+    },
+    {
+      "id": "agent-detail",
+      "name": "Agent Detail Screen",
+      "deps": ["agents-screen"],
+      "prompt": "Create Agent Detail screen showing agent info and sessions list. Sessions sorted: active first, then by date. Tap session navigates to SessionDetail.",
+      "acceptance": [
+        "Shows agent name, paired date",
+        "Lists all sessions for this agent",
+        "Sessions sorted: active on top, then chronological",
+        "Session item: status badge, limits, dates",
+        "Tap session → SessionDetail screen",
+        "Revoke agent button"
+      ],
+      "estimatedIterations": 12
+    },
+    {
+      "id": "session-detail",
+      "name": "Session Detail Screen",
+      "deps": ["agent-detail"],
+      "prompt": "Create Session Detail screen showing session info and transaction log. Show limits, expiry, amount used. List transactions chronologically.",
+      "acceptance": [
+        "Shows session status, limits, expiry",
+        "Shows amount used vs remaining",
+        "Lists transactions in this session",
+        "Transaction item: timestamp, amount, destination, status",
+        "Revoke session button (if active)",
+        "Empty state when no transactions"
+      ],
+      "estimatedIterations": 12
+    },
+    {
+      "id": "notifications",
+      "name": "Notification Center",
+      "deps": ["services-api", "navigation"],
+      "prompt": "Create notification bell icon in header. Shows badge for pending count. Tap opens notification sheet/modal listing pending session requests. Request detail view with approve/deny buttons. Approve uses passkey signature.",
+      "acceptance": [
+        "Bell icon in header with badge count",
+        "Tap opens notification modal/sheet",
+        "Lists pending session requests",
+        "Each: agent name, limits, 'Detail' button",
+        "Detail view shows full request info",
+        "Approve button → passkey sign → API approve",
+        "Deny button → API deny",
+        "Notifications update after approve/deny"
+      ],
+      "estimatedIterations": 18
+    },
+    {
+      "id": "integration",
+      "name": "Integration & Polish",
+      "deps": ["onboarding", "wallet-screen", "agents-screen", "agent-detail", "session-detail", "notifications"],
+      "prompt": "Connect all screens, test full flows. Add pull-to-refresh, loading states, error handling. Test on iOS and Android simulators. Fix any navigation or state bugs.",
+      "acceptance": [
+        "Full flow works: create wallet → pair agent → approve session → view transactions",
+        "Wallet balance refreshes correctly",
+        "Session approval flow works end-to-end",
+        "Pull-to-refresh on list screens",
+        "Loading spinners during API calls",
+        "Error messages displayed properly",
+        "Works on iOS simulator",
+        "Works on Android emulator"
+      ],
+      "estimatedIterations": 20
+    }
+  ],
+  "mergeOrder": [
+    "setup",
+    "types",
+    "services-api",
+    "services-solana",
+    "navigation",
+    "onboarding",
+    "wallet-screen",
+    "agents-screen",
+    "agent-detail",
+    "session-detail",
+    "notifications",
+    "integration"
+  ]
+}
